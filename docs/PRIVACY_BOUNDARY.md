@@ -148,6 +148,15 @@ The development diagnostic may expose only wallet name/RDNS/API version, endpoin
 
 The wallet's shielded address may scope encrypted application private state but must never serve as its encryption password. NightParcel private-state exports and signing-key exports are separate recovery artifacts. Clearing browser storage can permanently lose unexported application state even when the wallet seed survives.
 
+## Phase 1D request-file and interface boundary
+
+- The request form keeps values in browser component state and downloads a local `nightparcel.invoice.draft.v1` JSON file. It does not put invoice fields, commitments, addresses, or descriptions in the URL.
+- The draft is not encrypted. Anyone receiving or reading the file learns its contents, so users must share it through an intended private channel.
+- The draft is marked `DRAFT_UNCOMMITTED` and is rejected by the payment authorization path. This prevents an attractive UI artifact from being mistaken for on-chain invoice evidence.
+- Raw JSON is available only under an advanced disclosure. Normal product surfaces display readable terms and truncated/sanitized technical values.
+- Recorded Phase 1B evidence is rendered from a checked-in redacted artifact and is visually separated from live browser-session activity. It must never be relabelled as the connected user's transaction.
+- Screenshots are captured only in a disconnected state. They contain no full wallet address, seed, key, password, private opening, or fabricated live balance.
+
 ## Phase 1B empirical evidence
 
 - Invoice contract: `1474cd09114f90683f028bc91354026dd4bd038879428b38880dfb95d3e70324`

@@ -1,6 +1,6 @@
 import type { ConnectedAPI, InitialAPI } from '@midnight-ntwrk/dapp-connector-api';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { diagnoseConnectedWallet, isCompatibleConnectorVersion, validateRequest } from './connector';
+import { connectWallet, diagnoseConnectedWallet, isCompatibleConnectorVersion, validateRequest } from './connector';
 
 const valid = () => ({
   version: 'nightparcel.invoice.v1',
@@ -98,5 +98,81 @@ describe('sanitized wallet readiness diagnostic', () => {
     expect(result.issues.join(' ')).toContain('network does not match');
     expect(result.issues.join(' ')).toContain('DUST balance is zero');
     expect(result.proofServer.browserReachability).toBe('cors-or-unreachable');
+  });
+});
+
+describe('connector runtime compatibility', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  const authorize = (api: ConnectedAPI) => {
+    const wallet = detectedWallet();
+    wallet.api.connect = vi.fn().mockResolvedValue(api);
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }));
+    return { wallet, connect: () => connectWallet(wallet, 'undeployed') };
+  };
+
+  it('continues without runtime hintUsage and records a non-blocking compatibility limitation', async () => {
+    const { connect } = authorize(connectedApi());
+
+    const result = await connect();
+
+    expect(result.diagnostic.readyForTransfer).toBe(true);
+    expect(result.diagnostic.compatibilityLimitations).toEqual([
+      expect.stringContaining('does not expose Connector API hintUsage'),
+    ]);
+  });
+
+  it('awaits working hintUsage before running strict diagnostics', async () => {
+    const api = connectedApi();
+    const hintUsage = vi.fn().mockResolvedValue(undefined);
+    api.hintUsage = hintUsage;
+    const { connect } = authorize(api);
+
+    const result = await connect();
+
+    expect(hintUsage).toHaveBeenCalledOnce();
+    expect(hintUsage).toHaveBeenCalledWith(expect.arrayContaining([
+      'getConfiguration',
+      'getShieldedAddresses',
+      'getDustBalance',
+      'makeTransfer',
+      'submitTransaction',
+    ]));
+    expect(result.diagnostic.compatibilityLimitations).toEqual([]);
+    expect(result.diagnostic.readyForTransfer).toBe(true);
+  });
+
+  it('propagates an explicit permission rejection from hintUsage', async () => {
+    const api = connectedApi();
+    api.hintUsage = vi.fn().mockRejectedValue(new Error('PermissionRejected: transaction access denied'));
+    const { connect } = authorize(api);
+
+    await expect(connect()).rejects.toThrow('PermissionRejected');
+  });
+
+  it('keeps a wallet without a required transaction method blocked', async () => {
+    const api = connectedApi();
+    Reflect.deleteProperty(api, 'makeTransfer');
+    const { connect } = authorize(api);
+
+    const result = await connect();
+
+    expect(result.diagnostic.readyForTransfer).toBe(false);
+    expect(result.diagnostic.issues).toContain('Required connector method makeTransfer is unavailable.');
+  });
+
+  it('rejects a wallet connected to the wrong network', async () => {
+    const { connect } = authorize(connectedApi({ network: 'preview' }));
+
+    await expect(connect()).rejects.toThrow('network does not match undeployed');
+  });
+
+  it('keeps a wallet without DUST blocked', async () => {
+    const { connect } = authorize(connectedApi({ dust: 0n }));
+
+    const result = await connect();
+
+    expect(result.diagnostic.readyForTransfer).toBe(false);
+    expect(result.diagnostic.issues).toContain('DUST balance is zero.');
   });
 });
