@@ -4,8 +4,8 @@ Checked 2026-10-16. The public Midnight schedule says Wave 2 ends October 17, wh
 
 ## Mandatory materials
 
-- [ ] Public GitHub repository URL. No remote is configured yet.
-- [ ] GitHub repository topic `midnightntwrk`. This can only be set after publication.
+- [x] Public GitHub repository: https://github.com/Alike001/nightparcel
+- [x] GitHub repository topic `midnightntwrk` verified through the GitHub API.
 - [x] Apache-2.0 `LICENSE` and third-party `NOTICE` are present.
 - [x] Pinned Yarn and Midnight dependencies are committed in the project files and lockfile.
 - [x] Technical README includes setup, architecture, judge path, evidence, and limitations.

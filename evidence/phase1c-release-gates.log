@@ -32,3 +32,9 @@ Browser runtime
 - Lace 2.4.2 installation: observed in Chrome Default and Profile 2.
 - Connector authorization/readiness diagnostic: awaiting owner interaction.
 - Browser transfer/indexer/recipient reconciliation: not executed; no transaction evidence claimed.
+
+Publication
+- Public repository: https://github.com/Alike001/nightparcel
+- Default branch: `main`
+- Initial release commit: `d5c80e7`
+- Required repository topic: `midnightntwrk` verified

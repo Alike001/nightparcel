@@ -80,7 +80,7 @@ The shielded account address can be the account-scoping identifier, but it must 
 | Browser contract lifecycle | BLOCKED | contract/private-state integration remains gated |
 | Browser private-state persistence/recovery | BLOCKED | requires runtime implementation and destructive-loss fixture planning |
 | Four product surfaces | VERIFIED WITH LIMITATIONS | build passes; browser lifecycle actions remain gated |
-| Wave 2 README/license/NOTICE/checklists | PREPARED | publication, deck, video, and submission are owner actions |
+| Wave 2 repository/README/license/NOTICE/checklists | VERIFIED/PREPARED | public repository and required topic verified; deck, video, and submission remain owner actions |
 
 ## 6. Privacy findings and limitations
 
@@ -117,7 +117,9 @@ No upstream reference repository was modified. No sNIGHT, custodial vault, mainn
 
 Prepared: Apache-2.0 license, third-party notice, pinned dependency files, technical README, reproducible test commands, redacted evidence, progress-description draft, demo plan, and pitch-deck outline.
 
-Missing/owner-controlled: public GitHub URL, `midnightntwrk` repository topic, final deck/link, authentic demo/video link, authenticated AKINDO submission fields, and confirmed live deadline. The public Buildathon schedule says October 17, while the rendered AKINDO page on October 16 corresponded to October 19 at 15:00 UTC. Submit against the earlier date unless the authenticated platform confirms otherwise.
+Published and verified: https://github.com/Alike001/nightparcel is public on branch `main`, with topic `midnightntwrk`; initial release commit `d5c80e7` passed the staged secret/path audit.
+
+Missing/owner-controlled: final deck/link, authentic demo/video link, authenticated AKINDO submission fields, and confirmed live deadline. The public Buildathon schedule says October 17, while the rendered AKINDO page on October 16 corresponded to October 19 at 15:00 UTC. Submit against the earlier date unless the authenticated platform confirms otherwise.
 
 See `docs/WAVE_2_SUBMISSION_CHECKLIST.md` for the itemized list.
 
@@ -126,8 +128,8 @@ See `docs/WAVE_2_SUBMISSION_CHECKLIST.md` for the itemized list.
 1. In the already opened `http://127.0.0.1:5173/`, unlock/initialize Lace in Chrome Default, click **Connect on undeployed**, and approve only NightParcel.
 2. Return the exact on-screen message or the copied sanitized diagnostic; do not send a seed, password, full address, or private key.
 3. If it passes, repeat in Profile 2. The two fingerprints must differ while network/endpoints agree.
-4. Confirm the authenticated AKINDO deadline and desired public GitHub repository name.
-5. After the final secret audit, publish the repository, set `midnightntwrk`, record the honest demo, finish the deck, and submit.
+4. Confirm the authenticated AKINDO deadline.
+5. Record the honest demo, finish the deck, enter https://github.com/Alike001/nightparcel in AKINDO, and submit.
 
 ## Verdict
 

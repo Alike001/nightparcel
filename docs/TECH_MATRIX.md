@@ -36,7 +36,8 @@ Date: 2026-10-16. Status reflects local evidence from this machine, not upstream
 | Connector API integration | IMPLEMENTED_RUNTIME_PENDING | Connector API 4.0.1; version/network/DUST/capability/prover checks; sanitized account fingerprint; transfer path compiles | no authorized two-profile transfer or reconciliation yet |
 | Product frontend | IMPLEMENTED_WITH_LIMITATIONS | 4 responsive surfaces; 18 simulator + 12 supporting tests; typecheck/lint/build pass | create/acknowledge/private-state browser paths gated and disabled |
 | Phase 1C overall | BLOCKED | code/release materials pass local gates | AC-07/AC-08 and browser persistence/recovery await owner-controlled runtime |
-| Release readiness | NOT READY | README/license/NOTICE/checklist/demo/deck plans prepared | public repo/topic, final deck/video, AKINDO fields, deadline confirmation, and browser result missing |
+| Public repository | VERIFIED | `Alike001/nightparcel`, public `main`, topic `midnightntwrk`, initial commit `d5c80e7` | final browser result must still be pushed consistently |
+| Release readiness | NOT READY | README/license/NOTICE/checklist/demo/deck plans and public repository prepared | final deck/video, AKINDO fields, deadline confirmation, and browser result missing |
 
 ## Gate verdicts
 

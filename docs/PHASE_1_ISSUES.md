@@ -81,11 +81,11 @@ Result: the four responsive surfaces render authentic captured evidence and the 
 ### P8 — Wave 2 publication and submission: OWNER_ACTION_REQUIRED
 
 - Confirm the authenticated AKINDO deadline because the official October 17 schedule conflicts with the rendered October 19 countdown.
-- Publish the repository, set the `midnightntwrk` topic, and verify the resulting public URL.
+- Keep the verified public repository (`Alike001/nightparcel`) and `midnightntwrk` topic current with the final browser result.
 - Produce the final deck and demo recording from the prepared evidence-first outlines.
 - Enter the progress description and verify team members/material links in the authenticated form.
 
-No public Git remote is configured yet. Publication must follow the final secret and artifact audit.
+The public repository and required topic are verified. Final browser-result consistency, video/deck links, and authenticated submission fields remain open.
 
 ### P7 — verification and submission audit: COMPLETE_WITH_BLOCKERS
 
