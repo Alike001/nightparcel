@@ -9,6 +9,7 @@ import {
 import {
   Contract,
   ledger,
+  pureCircuits,
   type InvoiceOpening,
   type SettlementEvidence,
 } from '../../contract/managed/nightparcel/contract/index.js';
@@ -88,6 +89,31 @@ describe('NightParcel invoice registry (in memory)', () => {
       'Invoice already exists',
     );
     expect(sim.ledger().invoices.size()).toBe(1n);
+  });
+
+  it('lets a payer reproduce a registered commitment from the privately shared opening', () => {
+    const sim = deploy();
+    const invoice = opening();
+    const salt = bytes32();
+    const created = sim.call('createInvoice', invoice, salt).result;
+    const recomputed = pureCircuits.computeInvoiceCommitment(
+      new Uint8Array(Buffer.from(sim.address, 'hex')),
+      NETWORK_TAG,
+      TOKEN_COLOR,
+      invoice,
+      salt,
+    );
+
+    expect(recomputed).toEqual(created);
+    expect(
+      pureCircuits.computeInvoiceCommitment(
+        new Uint8Array(Buffer.from(sim.address, 'hex')),
+        NETWORK_TAG,
+        TOKEN_COLOR,
+        { ...invoice, amount: invoice.amount + 1n },
+        salt,
+      ),
+    ).not.toEqual(created);
   });
 
   it('rejects invalid invoice values without changing public state', () => {

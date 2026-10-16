@@ -157,6 +157,16 @@ The wallet's shielded address may scope encrypted application private state but 
 - Recorded Phase 1B evidence is rendered from a checked-in redacted artifact and is visually separated from live browser-session activity. It must never be relabelled as the connected user's transaction.
 - Screenshots are captured only in a disconnected state. They contain no full wallet address, seed, key, password, private opening, or fabricated live balance.
 
+## Phase 2A payable-request boundary
+
+- `nightparcel.invoice.v2` is a privately shared disclosure to the intended payer, not an encrypted container. It contains the invoice opening, salt, terms, exact shielded recipient, token color, contract address, public merchant key, and commitment.
+- The payer needs those fields to recompute the original Compact commitment and exact shielded output. They must not be published in URLs, screenshots, logs, analytics, or public issue reports.
+- The merchant authorization secret is never included. Matching a merchant key and a valid commitment authenticates control inside that invoice book; it does not establish a person's real-world identity. NightParcel therefore requires trusted-channel recipient confirmation before Lace authorization.
+- The payer queries current indexer state and rejects unknown, cancelled, or already acknowledged commitments. JSON parsing alone never grants payment authority.
+- Account-scoped private state uses the wallet account key only as a namespace. A separately entered passphrase protects browser storage. Recovery exports include encrypted application state and contract signing keys and must be stored privately and separately from their passphrase.
+- A persisted payment intent contains the account fingerprint, contract, commitment, network, status, timestamps, optional transaction identifier, and failure reason. It contains no seed, private opening, salt, full recipient, or passphrase, but it is linkable metadata on the local device.
+- `REVIEW_REQUIRED` is mandatory after interrupted or ambiguous submission. Automatic rebroadcast would create a duplicate-payment risk.
+
 ## Phase 1B empirical evidence
 
 - Invoice contract: `1474cd09114f90683f028bc91354026dd4bd038879428b38880dfb95d3e70324`

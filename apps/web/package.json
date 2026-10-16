@@ -4,23 +4,32 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "copy:zk": "node scripts/copy-zk.mjs",
+    "dev": "yarn copy:zk && vite",
     "preview": "vite preview",
-    "build": "tsc -b && vite build",
+    "build": "yarn copy:zk && tsc -b && vite build",
     "typecheck": "tsc -b --pretty false",
     "lint": "eslint src",
-    "test": "vitest run",
+    "test": "vitest run --exclude 'e2e/**'",
     "test:e2e": "playwright test"
   },
   "dependencies": {
     "@midnight-ntwrk/dapp-connector-api": "4.0.1",
+    "@midnight-ntwrk/midnight-js-contracts": "4.1.1",
+    "@midnight-ntwrk/midnight-js-fetch-zk-config-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-http-client-proof-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-indexer-public-data-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-level-private-state-provider": "4.1.1",
     "@midnight-ntwrk/midnight-js-network-id": "4.1.1",
     "@midnight-ntwrk/midnight-js-protocol": "4.1.1",
+    "@midnight-ntwrk/midnight-js-types": "4.1.1",
     "@midnight-ntwrk/midnight-js-utils": "4.1.1",
+    "@midnight-ntwrk/wallet-sdk-address-format": "3.1.2",
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "7.9.4"
+    "react-router-dom": "7.18.2",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

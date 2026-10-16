@@ -2,23 +2,20 @@ import type { ConnectedAPI, InitialAPI } from '@midnight-ntwrk/dapp-connector-ap
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { Transaction } from '@midnight-ntwrk/midnight-js-protocol/ledger';
 import { fromHex } from '@midnight-ntwrk/midnight-js-utils';
-
-export type InvoiceRequest = {
-  version: 'nightparcel.invoice.v1';
-  network: string;
-  contractAddress: string;
-  invoiceCommitment: string;
-  tokenColor: string;
-  amount: string;
-  recipient: string;
-  expiresAt: number;
-  memo?: string;
-};
+import type { VerifiedInvoiceRequest } from './invoice-schema';
+export type { InvoiceRequest, VerifiedInvoiceRequest } from './invoice-schema';
 
 export type ConnectorTransfer = {
   transactionId: string;
   submittedAt: string;
 };
+
+export class AmbiguousSubmissionError extends Error {
+  constructor(readonly transactionId: string, cause: unknown) {
+    super('The wallet created a transaction identifier, but submission did not return a reliable result. Do not retry automatically; reconcile this transaction first.', { cause });
+    this.name = 'AmbiguousSubmissionError';
+  }
+}
 
 export type DetectedWallet = { key: string; name: string; api: InitialAPI };
 
@@ -48,7 +45,7 @@ export type WalletDiagnostic = {
     dustBalance: string;
     dustCap: string;
   };
-  capabilities: Record<'makeTransfer' | 'submitTransaction' | 'getTxHistory' | 'getProvingProvider', boolean>;
+  capabilities: Record<'makeTransfer' | 'balanceUnsealedTransaction' | 'submitTransaction' | 'getTxHistory' | 'getProvingProvider', boolean>;
   proofServer: { configuredForLaceLocal: boolean; browserReachability: 'reachable' | 'cors-or-unreachable' | 'not-configured' };
   compatibilityLimitations: string[];
   issues: string[];
@@ -67,6 +64,7 @@ const REQUIRED_DIAGNOSTIC_METHODS = [
 const HINTED_METHODS = [
   ...REQUIRED_DIAGNOSTIC_METHODS,
   'makeTransfer',
+  'balanceUnsealedTransaction',
   'submitTransaction',
   'getTxHistory',
   'getProvingProvider',
@@ -126,6 +124,7 @@ export async function diagnoseConnectedWallet(
   ]);
   const capabilities = {
     makeTransfer: typeof api.makeTransfer === 'function',
+    balanceUnsealedTransaction: typeof api.balanceUnsealedTransaction === 'function',
     submitTransaction: typeof api.submitTransaction === 'function',
     getTxHistory: typeof api.getTxHistory === 'function',
     getProvingProvider: typeof api.getProvingProvider === 'function',
@@ -144,6 +143,16 @@ export async function diagnoseConnectedWallet(
     if (!present) issues.push(`Required connector method ${name} is unavailable.`);
   }
   if (!proofServer.configuredForLaceLocal) issues.push('Lace is not configured for the local proof server on port 6300.');
+  const normalizeLocal = (value: string) => value.replace('localhost', '127.0.0.1').replace(/\/$/, '');
+  if (normalizeLocal(configuration.indexerUri) !== 'http://127.0.0.1:8088/api/v4/graphql') {
+    issues.push('Lace indexer endpoint does not match the NightParcel local indexer API v4 endpoint.');
+  }
+  if (normalizeLocal(configuration.indexerWsUri) !== 'ws://127.0.0.1:8088/api/v4/graphql/ws') {
+    issues.push('Lace indexer WebSocket endpoint does not match the NightParcel local indexer API v4 endpoint.');
+  }
+  if (normalizeLocal(configuration.substrateNodeUri) !== 'ws://127.0.0.1:9944') {
+    issues.push('Lace node endpoint does not match the NightParcel local node.');
+  }
 
   return {
     checkedAt: new Date().toISOString(),
@@ -175,25 +184,6 @@ export async function diagnoseConnectedWallet(
     issues,
     readyForTransfer: issues.length === 0,
   };
-}
-
-export function validateRequest(value: unknown): InvoiceRequest {
-  if (!value || typeof value !== 'object') throw new Error('Request must be a JSON object.');
-  const request = value as Partial<InvoiceRequest>;
-  if (request.version !== 'nightparcel.invoice.v1') throw new Error('Unsupported request version.');
-  for (const field of ['network', 'contractAddress', 'invoiceCommitment', 'tokenColor', 'amount', 'recipient'] as const) {
-    if (typeof request[field] !== 'string' || request[field]!.length === 0) {
-      throw new Error(`Request field “${field}” is missing.`);
-    }
-  }
-  if (!/^\d+$/.test(request.amount! as string) || BigInt(request.amount! as string) <= 0n) {
-    throw new Error('Amount must be a positive integer.');
-  }
-  if (typeof request.expiresAt !== 'number' || !Number.isSafeInteger(request.expiresAt)) {
-    throw new Error('Expiry must be a Unix timestamp.');
-  }
-  if (request.expiresAt <= Math.floor(Date.now() / 1_000)) throw new Error('This invoice has expired.');
-  return request as InvoiceRequest;
 }
 
 export async function connectWallet(
@@ -228,7 +218,7 @@ export async function connectWallet(
 
 export async function makeInvoiceTransfer(
   api: ConnectedAPI,
-  request: InvoiceRequest,
+  request: VerifiedInvoiceRequest,
 ): Promise<ConnectorTransfer> {
   const config = await api.getConfiguration();
   if (config.networkId !== request.network) {
@@ -236,7 +226,7 @@ export async function makeInvoiceTransfer(
   }
   const balances = await api.getShieldedBalances();
   const available = balances[request.tokenColor] ?? 0n;
-  const amount = BigInt(request.amount);
+  const amount = BigInt(request.opening.amount);
   if (available < amount) throw new Error('Insufficient shielded token balance.');
 
   const { tx } = await api.makeTransfer(
@@ -256,6 +246,10 @@ export async function makeInvoiceTransfer(
   );
   const [transactionId] = transaction.identifiers();
   if (!transactionId) throw new Error('Wallet-created transfer has no transaction identifier.');
-  await api.submitTransaction(tx);
+  try {
+    await api.submitTransaction(tx);
+  } catch (error) {
+    throw new AmbiguousSubmissionError(transactionId, error);
+  }
   return { transactionId, submittedAt: new Date().toISOString() };
 }
