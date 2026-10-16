@@ -1,15 +1,25 @@
 import { expect, test } from '@playwright/test';
 
 const committedRequest = {
-  version: 'nightparcel.invoice.v1',
+  version: 'nightparcel.invoice.v2',
   network: 'undeployed',
+  networkTag: Buffer.from('undeployed'.padEnd(32, '\0')).toString('hex'),
   contractAddress: 'ab'.repeat(32),
+  merchantKey: 'bc'.repeat(32),
   invoiceCommitment: 'cd'.repeat(32),
   tokenColor: 'ef'.repeat(32),
-  amount: '125',
   recipient: `mn_shield-addr_undeployed1${'a'.repeat(72)}`,
-  expiresAt: 4_102_444_800,
-  memo: 'Product design milestone',
+  opening: {
+    invoiceId: '01'.repeat(32),
+    amount: '125',
+    payeeCoinPublicKey: '02'.repeat(32),
+    payeeEncryptionPublicKey: '03'.repeat(32),
+    expiresAt: 4_102_444_800,
+    termsDigest: '04'.repeat(32),
+  },
+  invoiceSalt: '05'.repeat(32),
+  privateMemo: 'Product design milestone',
+  termsEncoding: 'nightparcel.terms.utf8-sha256.v1',
 };
 
 test('landing page explains the product and primary CTA opens the workspace', async ({ page }) => {
@@ -80,8 +90,8 @@ test('mocked connector without hintUsage reaches diagnostics instead of crashing
           getConnectionStatus: async () => ({ status: 'connected' as const, networkId: 'undeployed' }),
           getConfiguration: async () => ({
             networkId: 'undeployed',
-            indexerUri: 'http://127.0.0.1:8088/api/v3/graphql',
-            indexerWsUri: 'ws://127.0.0.1:8088/api/v3/graphql/ws',
+            indexerUri: 'http://127.0.0.1:8088/api/v4/graphql',
+            indexerWsUri: 'ws://127.0.0.1:8088/api/v4/graphql/ws',
             substrateNodeUri: 'ws://127.0.0.1:9944',
             proverServerUri: 'http://127.0.0.1:6300',
           }),
@@ -94,6 +104,7 @@ test('mocked connector without hintUsage reaches diagnostics instead of crashing
           getUnshieldedBalances: async () => ({}),
           getDustBalance: async () => ({ balance: 10n, cap: 100n }),
           makeTransfer: async () => ({ tx: '' }),
+          balanceUnsealedTransaction: async () => ({ tx: '' }),
           submitTransaction: async () => undefined,
           getTxHistory: async () => [],
           getProvingProvider: async () => { throw new Error('Not invoked by readiness diagnostics'); },
@@ -121,6 +132,7 @@ test('request form validates fields and produces an honest downloadable draft', 
   await expect(page.getByText('Enter the intended recipient’s full shielded address.')).toBeVisible();
 
   await page.getByLabel('Amount').fill('125');
+  await page.getByLabel('Exact token color').fill('ef'.repeat(32));
   await page.getByLabel('Private description').fill('Brand identity — final milestone');
   await page.getByLabel('Intended recipient').fill(`mn_shield-addr_undeployed1${'b'.repeat(72)}`);
   await page.getByLabel('Expires').fill('2099-01-01T12:00');
@@ -142,8 +154,56 @@ test('payment import presents exact review terms but keeps authorization disable
   await expect(page.getByRole('heading', { name: 'Check every term' })).toBeVisible();
   await expect(page.getByText('125', { exact: true })).toBeVisible();
   await expect(page.getByText('undeployed', { exact: true })).toBeVisible();
+  const trustedConfirmation = page.getByRole('checkbox', { name: /confirmed this recipient and invoice-book identity/i });
+  await expect(trustedConfirmation).not.toBeChecked();
   await expect(page.getByRole('button', { name: /Authorize in Lace/ })).toBeDisabled();
-  await expect(page.getByText(/valid request alone cannot start a payment/i)).toBeVisible();
+  await trustedConfirmation.check();
+  await expect(page.getByRole('button', { name: /Authorize in Lace/ })).toBeDisabled();
+  await expect(page.getByText(/request file alone can never start a payment/i)).toBeVisible();
+});
+
+test('legacy request format is rejected before payment authorization', async ({ page }) => {
+  await page.goto('/app/pay');
+  await page.getByLabel('Select file').setInputFiles({
+    name: 'legacy-request.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({
+      version: 'nightparcel.invoice.v1',
+      network: 'undeployed',
+      contractAddress: 'ab'.repeat(32),
+      invoiceCommitment: 'cd'.repeat(32),
+      amount: '125',
+      recipient: committedRequest.recipient,
+    })),
+  });
+  await expect(page.getByText('NightParcel could not validate this payment request.')).toBeVisible();
+  await page.getByText('Technical details').click();
+  await expect(page.getByText(/Legacy nightparcel\.invoice\.v1 files are not payable/i)).toBeVisible();
+  await expect(page.getByRole('button', { name: /Authorize in Lace/ })).toBeDisabled();
+});
+
+test('interrupted authorization reloads into review required without rebroadcasting', async ({ page }) => {
+  await page.addInitScript(() => {
+    const id = `undeployed:${'ab'.repeat(32)}:${'cd'.repeat(32)}:account-fixture`;
+    localStorage.setItem('nightparcel.payment-intents.v1', JSON.stringify({
+      [id]: {
+        id,
+        accountFingerprint: 'account-fixture',
+        invoiceCommitment: 'cd'.repeat(32),
+        contractAddress: 'ab'.repeat(32),
+        network: 'undeployed',
+        status: 'AUTHORIZING',
+        startedAt: '2026-10-16T10:00:00.000Z',
+        updatedAt: '2026-10-16T10:00:00.000Z',
+      },
+    }));
+  });
+
+  await page.goto('/app/pay');
+  await expect(page.getByText('Review required', { exact: true })).toBeVisible();
+  await expect(page.getByText(/interrupted payment needs reconciliation before any retry/i)).toBeVisible();
+  await expect(page.getByText(/will not rebroadcast it automatically/i)).toBeVisible();
+  await expect(page.getByRole('button', { name: /Authorize in Lace/ })).toBeDisabled();
 });
 
 test('uncommitted draft cannot enter the payment authorization flow', async ({ page }) => {
@@ -196,19 +256,19 @@ for (const viewport of [
   });
 }
 
-test('captures genuine disconnected product screenshots', async ({ page }) => {
+test('captures genuine disconnected Phase 2A product screenshots', async ({ page }) => {
   for (const width of [1440, 1024, 768, 390]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
     await page.goto('/');
     await expect(page.getByRole('heading', { name: /Get paid privately/ })).toBeVisible();
-    await page.screenshot({ path: `../../evidence/phase1d-landing-${width}.png`, fullPage: true });
+    await page.screenshot({ path: `../../evidence/phase2a-landing-${width}.png`, fullPage: true });
   }
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/app');
   await expect(page.locator('.workspace-shell')).toBeVisible();
-  await page.screenshot({ path: '../../evidence/phase1d-workspace-1440.png', fullPage: true });
+  await page.screenshot({ path: '../../evidence/phase2a-workspace-1440.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/app/request');
-  await expect(page.getByRole('heading', { name: 'Prepare private payment terms.' })).toBeVisible();
-  await page.screenshot({ path: '../../evidence/phase1d-request-390.png', fullPage: true });
+  await expect(page.getByRole('heading', { name: 'Create a private, payable request.' })).toBeVisible();
+  await page.screenshot({ path: '../../evidence/phase2a-request-390.png', fullPage: true });
 });

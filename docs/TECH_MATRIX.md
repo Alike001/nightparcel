@@ -1,4 +1,4 @@
-# NightParcel technical matrix through Phase 1E
+# NightParcel technical matrix through Phase 2A
 
 Date: 2026-10-16. Status reflects local evidence from this machine, not upstream CI.
 
@@ -28,13 +28,13 @@ Date: 2026-10-16. Status reflects local evidence from this machine, not upstream
 | NIGHT-backed wrapper | NO-GO | no implementation | backing/redemption/recovery/security unproven |
 | Phase 1B overall | GO_WITH_LIMITATIONS | original contract and Node two-wallet flow verified | mandatory browser two-profile gates remain open |
 | Original Compact contract | VERIFIED | compiler 0.31.1; 3 exported circuits; full proving-key compile exit 0 | merchant key cannot be constructor address-bound on runtime 4.1.1; fresh deployment secret required |
-| Contract simulator | VERIFIED | 18/18 tests passed | authoritative for contract logic, not wallet settlement truth |
+| Contract simulator | VERIFIED | 19/19 tests passed, including public pure commitment recomputation | authoritative for contract logic, not wallet settlement truth |
 | NightParcel local payment | VERIFIED | 125 units; payer `300→175`; merchant `0→125`; both histories and indexer `SUCCESS` | controlled no-concurrency local flow |
 | Receipt commitment | VERIFIED_WITH_LIMITATION | matching receipt stored; duplicate rejected | merchant attestation; contract cannot query wallet/indexer truth |
 | Phase 1 privacy scan | VERIFIED_WITH_LIMITATION | positive control passed; exact sensitive bytes absent from decoded state/raw calls | alternate encoding and full Zswap decoding remain unresolved |
 | Lace browser profiles | INSTALLED_UNVERIFIED | Lace 2.4.2 manifests in Chrome Default and Profile 2 | unlock, account initialization, and authorization require owner action |
 | Connector API integration | IMPLEMENTED_RUNTIME_PENDING | Connector API 4.0.1; version/network/DUST/capability/prover checks; sanitized account fingerprint; transfer path compiles | no authorized two-profile transfer or reconciliation yet |
-| Product frontend | IMPLEMENTED_WITH_LIMITATIONS | public landing + 5 workspace surfaces; 18 simulator + 18 supporting tests; typecheck/lint/build pass | create/acknowledge/private-state browser paths gated and disabled |
+| Product frontend | IMPLEMENTED_WITH_LIMITATIONS | public landing + 5 workspace surfaces; 19 simulator + 30 supporting + 33 Playwright tests; typecheck/lint/build pass on Node 22 | browser lifecycle remains owner-runtime pending |
 | Phase 1C overall | BLOCKED | code/release materials pass local gates | AC-07/AC-08 and browser persistence/recovery await owner-controlled runtime |
 | Public repository | VERIFIED | `Alike001/nightparcel`, public `main`, topic `midnightntwrk`, initial commit `d5c80e7` | final browser result must still be pushed consistently |
 | Release readiness | NOT READY | README/license/NOTICE/checklist/demo/deck plans and public repository prepared | final deck/video, AKINDO fields, deadline confirmation, and browser result missing |
@@ -45,7 +45,13 @@ Date: 2026-10-16. Status reflects local evidence from this machine, not upstream
 | Production web build | VERIFIED_WITH_LIMITATION | lazy landing/workspace routes; build/typecheck/lint pass | ledger WASM ~10.2 MB; workspace chunk ~585 KB |
 | Phase 1D overall | SUBMIT_WITH_LIMITATIONS | understandable product, original contract baseline, real evidence, and honest browser boundaries | owner-assisted two-profile browser settlement remains unverified |
 | Lace `hintUsage` runtime mismatch | FIXED, MANUAL RETEST PENDING | runtime function guard; explicit rejection propagation; compatibility limitation in sanitized diagnostic; unit and Playwright regression coverage | actual Lace 2.4.2 reauthorization requires owner action |
-| First-party documentation | VERIFIED | 9 static routes; ~38.8 KB lazy docs chunk; 15 focused scenarios; 31/31 total Playwright tests | manual assistive-technology audit remains open |
+| First-party documentation | VERIFIED | 9 static routes; ~39.9 KB lazy docs chunk; 15 focused scenarios; 33/33 total Playwright tests | manual assistive-technology audit remains open |
+| Request format v2 | IMPLEMENTED_AND_TESTED | exact opening/salt recomputation; live ledger merchant/network/token/recipient/open-state checks; 11 integrity tests | trusted delivery is still required to associate a deployment with a real merchant |
+| Duplicate-payment controls | IMPLEMENTED_AND_TESTED | persisted account/invoice intent; Web Locks single flight; ambiguous/reloaded authorization becomes `REVIEW_REQUIRED`; 3 unit + 1 browser recovery test | real Lace denial/timeout/reload still needs owner runtime evidence |
+| Browser invoice book | IMPLEMENTED_RUNTIME_PENDING | deploy/open/create providers compile; indexer membership gate; v2 export only after confirmation | no real Lace contract transaction recorded |
+| Browser private-state recovery | IMPLEMENTED_RUNTIME_PENDING | account-scoped WebCrypto/IndexedDB provider; wrong-passphrase canary; state + signing-key export/import | reload, wrong password, switch-account, restore, and loss tests await owner-controlled Lace |
+| Phase 2A overall | NOT READY | deterministic compile, 19 simulator, 30 supporting, 33 browser tests and production build pass | real two-profile Lace Request → Pay → Verify and all six settlement checks are absent |
+| Dependency audit | PASS_WITH_TRANSITIVE_LIMITATIONS | React Router pinned to 7.18.2; no high advisory remains in `yarn npm audit --all --recursive` | four moderate deprecation notices and one low transitive `elliptic` advisory remain in upstream/tooling trees |
 
 ## Gate verdicts
 
@@ -59,6 +65,8 @@ Date: 2026-10-16. Status reflects local evidence from this machine, not upstream
 | F: sNIGHT | NO-GO | research only; critical invariants untested |
 | G: Lace two-profile lifecycle | BLOCKED | extension is installed twice, but owner authorization and real runtime evidence are absent |
 | H: Phase 1D product experience | PASS_WITH_LIMITATION | public landing, task workspace, responsive tests, production build | full browser lifecycle and private-state recovery remain blocked |
+| I: Phase 2A request integrity | PASS_WITH_LIMITATION | v2 cryptographic/live-state validation and duplicate-intent recovery pass deterministic tests | real-world merchant identity still depends on trusted-channel confirmation |
+| J: Phase 2A browser lifecycle | BLOCKED | implementation compiles and builds | owner authorization, browser contract proof, two-wallet payment, recipient reconciliation, and acknowledgement not run |
 
 ## Exact two-wallet evidence
 

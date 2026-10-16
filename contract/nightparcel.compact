@@ -59,12 +59,21 @@ circuit requireMerchant(): [] {
     );
 }
 
-circuit commitInvoice(opening: InvoiceOpening, salt: Bytes<32>): Bytes<32> {
+// Public, side-effect-free verifier for privately shared request files. The
+// payer supplies the deployment fields read from the public ledger and can
+// therefore reproduce the exact commitment without knowing merchantSecret.
+export pure circuit computeInvoiceCommitment(
+    contractAddress: Bytes<32>,
+    deploymentNetworkTag: Bytes<32>,
+    supportedTokenColor: Bytes<32>,
+    opening: InvoiceOpening,
+    salt: Bytes<32>
+): Bytes<32> {
     return persistentCommit<Vector<10, Bytes<32>>>([
         pad(32, "nightparcel:invoice:v1"),
-        kernel.self().bytes,
-        networkTag,
-        tokenColor,
+        contractAddress,
+        deploymentNetworkTag,
+        supportedTokenColor,
         opening.invoiceId,
         opening.amount as Bytes<32>,
         opening.payeeCoinPublicKey,
@@ -72,6 +81,16 @@ circuit commitInvoice(opening: InvoiceOpening, salt: Bytes<32>): Bytes<32> {
         opening.expiresAt as Bytes<32>,
         opening.termsDigest
     ], salt);
+}
+
+circuit commitInvoice(opening: InvoiceOpening, salt: Bytes<32>): Bytes<32> {
+    return computeInvoiceCommitment(
+        kernel.self().bytes,
+        networkTag,
+        tokenColor,
+        opening,
+        salt
+    );
 }
 
 circuit commitReceipt(

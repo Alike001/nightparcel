@@ -10,7 +10,8 @@ Freelancers and small businesses need payment evidence without publishing invoic
 
 - Compact language 0.23 compiled by Compact compiler 0.31.1.
 - Three original state-changing circuits: `createInvoice`, `cancelInvoice`, and `acknowledgeReceipt`.
-- Eighteen simulator tests covering authorization, replay, invalid evidence, state invariants, and public-state privacy.
+- Nineteen simulator tests covering authorization, replay, invalid evidence, state invariants, public-state privacy, and payer-side commitment recomputation.
+- Thirty supporting tests covering connector compatibility, request integrity, payment-intent persistence, and privacy helpers; 33 deterministic Playwright scenarios cover the product and documentation surfaces.
 - One clean local-network payment of 125 custom shielded-token units between independent wallets, reconciled by the payer wallet, indexer, and recipient wallet before `PAID_VERIFIED` was assigned.
 - A public product landing page and a responsive five-surface workspace with real connector calls, honest draft/submission states, and a clearly labelled immutable local-run evidence view.
 
@@ -92,8 +93,8 @@ Open `http://localhost:5173/` for the public product page or `http://localhost:5
 |---|---|
 | `/` | public explanation, privacy boundary, Midnight integration, and recorded evidence |
 | `/app` | overview and wallet connection |
-| `/app/request` | validate and download an honest local request draft |
-| `/app/pay` | import a committed request, review terms, and authorize in Lace |
+| `/app/request` | create a private draft; with verified Lace runtime, deploy/open an invoice book, commit it, and export a v2 request |
+| `/app/pay` | import a v2 request, verify its live commitment/open state, confirm the merchant, and authorize in Lace |
 | `/app/activity` | separate live browser state from recorded local evidence |
 | `/app/settings` | connector, network, DUST, proving, and privacy diagnostics |
 | `/docs` | first-party introduction and current capability status |
@@ -106,9 +107,11 @@ Open `http://localhost:5173/` for the public product page or `http://localhost:5
 | `/docs/troubleshooting` | actionable readiness and reconciliation failures |
 | `/docs/roadmap` | verified Wave 2 scope and unimplemented Wave 3 candidates |
 
-The request form currently produces an explicitly uncommitted local draft. Browser Compact creation and acknowledgement remain disabled until the SDK path and encrypted account-scoped private state are verified. Private request contents are never placed in public URLs.
+The request form always supports an explicitly uncommitted local draft. Phase 2A also implements the browser Compact deployment/open/create path and encrypted, account-scoped private-state plus signing-key recovery export. Those paths remain **runtime-unverified** until an owner-authorized Lace 2.4.2 session completes them on the local network. NightParcel generates a payable `nightparcel.invoice.v2` file only after the connected indexer exposes the new commitment. Private request contents are never placed in public URLs.
 
-The payment surface checks the connected network and balances, calls connector `makeTransfer`, derives the identifier from the returned serialized transaction, and calls `submitTransaction`. Submission remains `SUBMITTED · UNRESOLVED` until independent recipient and network reconciliation can run. It is never promoted to `PAID_VERIFIED` from the connector callback alone.
+The payer rejects legacy v1 files. A v2 file is not payable merely because its JSON is valid: NightParcel recomputes the salted invoice commitment, verifies the deployment network, public merchant key, exact token color and recipient keys, confirms the invoice is registered and still open, and checks exact-token funding. The payer must also confirm the merchant/recipient through a trusted channel because a self-consistent blockchain deployment does not establish real-world identity.
+
+The payment surface checks the connected network and balances, calls connector `makeTransfer`, derives the identifier from the returned serialized transaction, and calls `submitTransaction`. A local single-flight intent prevents duplicate clicks and survives reloads; interrupted or ambiguous submission becomes `REVIEW_REQUIRED` and is never automatically rebroadcast. Submission remains `SUBMITTED · UNRESOLVED` until independent recipient and network reconciliation can run. It is never promoted to `PAID_VERIFIED` from the connector callback alone.
 
 Lace approval, unlock, passwords, and transaction authorization always remain owner actions. A connector returned by `window.midnight` is rejected unless its API major version is 4 and its connected configuration passes the runtime diagnostic. Diagnostics contain no full addresses, seeds, keys, or private invoice openings.
 
@@ -118,7 +121,7 @@ Playwright uses the locally installed Chrome channel and deterministic UI fixtur
 yarn test:e2e
 ```
 
-Fixtures test interface states only and are never presented as settlement evidence. Genuine responsive captures are in `evidence/phase1d-*.png` and `evidence/phase1f-docs-*.png`.
+Fixtures test interface states only and are never presented as settlement evidence. Genuine disconnected responsive captures are in `evidence/phase2a-*.png`; they are product screenshots, not browser-wallet or settlement evidence.
 
 ## Documentation website
 
@@ -137,6 +140,7 @@ NightParcel keeps invoice openings out of its decoded contract state and uses a 
 - `docs/PHASE_1B_REPORT.md` — milestone verdicts, commands, evidence, and limitations
 - `docs/PHASE_1C_REPORT.md` — browser-runtime and Wave 2 release status
 - `docs/PHASE_1D_REPORT.md` — product experience, UI verification, and current release recommendation
+- `docs/PHASE_2A_REPORT.md` — request-integrity implementation, browser contract path, verification results, and owner-controlled blockers
 - `docs/DESIGN_SYSTEM.md` — reusable visual, responsive, accessibility, and settlement-state patterns
 - `docs/DOCUMENTATION_SITE.md` — documentation architecture and maintenance conventions
 - `docs/PRIVACY_BOUNDARY.md` — exact public/private boundary

@@ -1,7 +1,31 @@
 # NightParcel prioritized issues after Phase 0
 
 Date: 2026-10-16  
-Status: Phase 1D product experience is verified; Lace 2.4.2 exists in two profiles, but owner authorization and the two-profile browser lifecycle remain open.
+Status: Phase 2A request-integrity and browser contract plumbing are implemented; Lace 2.4.2 exists in two profiles, but owner authorization and the two-profile browser lifecycle remain open.
+
+## Phase 2A functional status
+
+### P12 — payable-request integrity and repeat-payment safety: COMPLETE_WITH_RUNTIME_LIMITATIONS
+
+- `nightparcel.invoice.v2` carries the opening and salt needed to reproduce the Compact commitment plus deployment, merchant, token, recipient, amount, and expiry bindings.
+- The payer queries the live ledger and rejects unknown, cancelled, acknowledged, forged, wrong-network, wrong-token, wrong-recipient, wrong-merchant, expired, or underfunded requests.
+- Legacy v1 and `DRAFT_UNCOMMITTED` files fail closed.
+- A trusted-channel confirmation is required because a valid deployment cannot prove a merchant's real-world identity.
+- Persisted single-flight intents block duplicate clicks and convert reload or ambiguous submission into `REVIEW_REQUIRED`; no automatic rebroadcast occurs.
+
+### P13 — browser invoice book and private-state recovery: IMPLEMENTED / OWNER RUNTIME REQUIRED
+
+- Wallet-backed providers, deploy/open/create operations, indexer membership confirmation, account-scoped encrypted private state, and private-state plus signing-key export/import compile and pass deterministic gates.
+- Runtime tests remain open for deployment/proving, indexer acceptance, reload, account switching, wrong passphrase, restore, and site-data loss.
+- Browser `acknowledgeReceipt` remains withheld until all six settlement checks can be established.
+
+### P14 — real browser Request → Pay → Verify: BLOCKED ON OWNER ACTION
+
+- Authorize Chrome Default at `/app/settings` and preserve only the sanitized diagnostic.
+- Authorize Profile 2, verify a distinct account fingerprint, and confirm the same local endpoints.
+- Confirm test-token color/funding and recipient out of band before any signature.
+- Then run one invoice deployment/create, recovery check, direct payment, payer/indexer/recipient reconciliation, and merchant acknowledgement.
+- Until this passes, the product is not functionally release-ready and no browser `PAID_VERIFIED` claim is permitted.
 
 ## Phase 1D product status
 

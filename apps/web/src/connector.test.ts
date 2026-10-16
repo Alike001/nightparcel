@@ -1,31 +1,6 @@
 import type { ConnectedAPI, InitialAPI } from '@midnight-ntwrk/dapp-connector-api';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { connectWallet, diagnoseConnectedWallet, isCompatibleConnectorVersion, validateRequest } from './connector';
-
-const valid = () => ({
-  version: 'nightparcel.invoice.v1',
-  network: 'undeployed',
-  contractAddress: 'ab'.repeat(32),
-  invoiceCommitment: 'cd'.repeat(32),
-  tokenColor: 'ef'.repeat(32),
-  amount: '125',
-  recipient: 'mn_shield-addr_test',
-  expiresAt: Math.floor(Date.now() / 1000) + 3600,
-});
-
-describe('invoice request validation', () => {
-  it('accepts a complete unexpired request', () => {
-    expect(validateRequest(valid()).amount).toBe('125');
-  });
-
-  it('rejects zero, expired, and incomplete requests before wallet interaction', () => {
-    expect(() => validateRequest({ ...valid(), amount: '0' })).toThrow('positive');
-    expect(() => validateRequest({ ...valid(), expiresAt: 1 })).toThrow('expired');
-    const incomplete = valid() as Partial<ReturnType<typeof valid>>;
-    delete incomplete.recipient;
-    expect(() => validateRequest(incomplete)).toThrow('recipient');
-  });
-});
+import { connectWallet, diagnoseConnectedWallet, isCompatibleConnectorVersion } from './connector';
 
 describe('connector compatibility', () => {
   it('accepts stable connector API 4 releases and rejects other majors or malformed versions', () => {
@@ -55,8 +30,8 @@ const connectedApi = (overrides: { network?: string; dust?: bigint } = {}) => {
     getConnectionStatus: vi.fn().mockResolvedValue({ status: 'connected', networkId: network }),
     getConfiguration: vi.fn().mockResolvedValue({
       networkId: network,
-      indexerUri: 'http://127.0.0.1:8088/api/v3/graphql',
-      indexerWsUri: 'ws://127.0.0.1:8088/api/v3/graphql/ws',
+      indexerUri: 'http://127.0.0.1:8088/api/v4/graphql',
+      indexerWsUri: 'ws://127.0.0.1:8088/api/v4/graphql/ws',
       substrateNodeUri: 'ws://127.0.0.1:9944',
       proverServerUri: 'http://127.0.0.1:6300',
     }),
@@ -69,6 +44,7 @@ const connectedApi = (overrides: { network?: string; dust?: bigint } = {}) => {
     getUnshieldedBalances: vi.fn().mockResolvedValue({}),
     getDustBalance: vi.fn().mockResolvedValue({ balance: overrides.dust ?? 10n, cap: 100n }),
     makeTransfer: vi.fn(),
+    balanceUnsealedTransaction: vi.fn(),
     submitTransaction: vi.fn(),
     getTxHistory: vi.fn(),
     getProvingProvider: vi.fn(),
@@ -136,6 +112,7 @@ describe('connector runtime compatibility', () => {
       'getShieldedAddresses',
       'getDustBalance',
       'makeTransfer',
+      'balanceUnsealedTransaction',
       'submitTransaction',
     ]));
     expect(result.diagnostic.compatibilityLimitations).toEqual([]);
