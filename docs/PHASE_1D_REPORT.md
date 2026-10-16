@@ -83,7 +83,7 @@ Run from the repository root with Node 22 and Corepack Yarn 4.18.0:
 | `yarn typecheck` | PASS |
 | `yarn lint` | PASS |
 | `yarn build` | PASS |
-| `yarn test:e2e` | PASS; 16/16 in system Chrome |
+| `yarn test:e2e` | PASS; 31/31 in system Chrome after Phase 1F documentation coverage |
 
 The production build is route-split. The landing route does not load the larger workspace/ledger bundle. The shared entry is approximately 497 KB and the workspace chunk approximately 585 KB before compression; the generated ledger WASM is approximately 10.2 MB. Further crypto-bundle reduction must not alter verified behavior and is deferred.
 
@@ -152,3 +152,11 @@ The fresh server exposes the Phase 1D landing page at `/` and workspace at `/app
 3. Repeat in Chrome Profile 2 and confirm its account fingerprint differs while the network/endpoints match.
 4. Confirm the intended recipient from Profile 2 and verify the supported test asset is actually available to the payer.
 5. Stop before token authorization unless both profiles pass. No browser payment or verified settlement is claimed by this update.
+
+## Phase 1F documentation update
+
+NightParcel now includes nine first-party routes under `/docs`, implemented as a reusable lazy-loaded shell and independent version-controlled page modules. The guides cover users, developers, and judges; accurately separate verified, runtime-pending, blocked, and planned behavior; and link to genuine source, technical reports, and redacted evidence.
+
+Fifteen documentation-specific Playwright scenarios cover the index, landing/workspace integration, active desktop navigation, nested deep links and refresh, mobile navigation, stable heading anchors, code copy, keyboard operation, documentation-local 404 handling, responsive overflow, and genuine screenshots. Together with the existing product suite, 31/31 browser tests pass.
+
+The production output emits the documentation as its own approximately 38.8 KB minified route chunk. It does not require the approximately 585.8 KB workspace chunk or ledger WASM merely to render documentation. The shared application entry remains approximately 497.8 KB and retains its existing optimization follow-up.

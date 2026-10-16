@@ -45,6 +45,7 @@ Date: 2026-10-16. Status reflects local evidence from this machine, not upstream
 | Production web build | VERIFIED_WITH_LIMITATION | lazy landing/workspace routes; build/typecheck/lint pass | ledger WASM ~10.2 MB; workspace chunk ~585 KB |
 | Phase 1D overall | SUBMIT_WITH_LIMITATIONS | understandable product, original contract baseline, real evidence, and honest browser boundaries | owner-assisted two-profile browser settlement remains unverified |
 | Lace `hintUsage` runtime mismatch | FIXED, MANUAL RETEST PENDING | runtime function guard; explicit rejection propagation; compatibility limitation in sanitized diagnostic; unit and Playwright regression coverage | actual Lace 2.4.2 reauthorization requires owner action |
+| First-party documentation | VERIFIED | 9 static routes; ~38.8 KB lazy docs chunk; 15 focused scenarios; 31/31 total Playwright tests | manual assistive-technology audit remains open |
 
 ## Gate verdicts
 

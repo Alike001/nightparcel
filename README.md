@@ -96,6 +96,15 @@ Open `http://localhost:5173/` for the public product page or `http://localhost:5
 | `/app/pay` | import a committed request, review terms, and authorize in Lace |
 | `/app/activity` | separate live browser state from recorded local evidence |
 | `/app/settings` | connector, network, DUST, proving, and privacy diagnostics |
+| `/docs` | first-party introduction and current capability status |
+| `/docs/getting-started` | pinned local setup and safe Lace readiness |
+| `/docs/payments` | request, review, payment, and state guidance |
+| `/docs/verification` | six-check settlement invariant and genuine evidence |
+| `/docs/privacy` | exact privacy and public-observability boundary |
+| `/docs/architecture` | Compact, ledger state, authentication, and wallet boundary |
+| `/docs/developers` | versions, source map, commands, and local execution |
+| `/docs/troubleshooting` | actionable readiness and reconciliation failures |
+| `/docs/roadmap` | verified Wave 2 scope and unimplemented Wave 3 candidates |
 
 The request form currently produces an explicitly uncommitted local draft. Browser Compact creation and acknowledgement remain disabled until the SDK path and encrypted account-scoped private state are verified. Private request contents are never placed in public URLs.
 
@@ -109,7 +118,13 @@ Playwright uses the locally installed Chrome channel and deterministic UI fixtur
 yarn test:e2e
 ```
 
-Fixtures test interface states only and are never presented as settlement evidence. Genuine responsive captures are in `evidence/phase1d-*.png`.
+Fixtures test interface states only and are never presented as settlement evidence. Genuine responsive captures are in `evidence/phase1d-*.png` and `evidence/phase1f-docs-*.png`.
+
+## Documentation website
+
+NightParcel documentation is static, version-controlled React content served from `/docs`; it does not need a CMS, database, wallet, or GitHub API. Each guide is an independent module registered in `apps/web/src/docs/registry.ts`, while the shared shell provides navigation, table of contents, copyable commands, responsive behavior, local 404 handling, and previous/next links.
+
+The documentation route is lazy-loaded separately from `/app`, so readers do not download the wallet/ledger workspace chunk merely to read a guide. Maintainer conventions and content boundaries are documented in `docs/DOCUMENTATION_SITE.md`.
 
 ## Privacy boundary
 
@@ -123,6 +138,7 @@ NightParcel keeps invoice openings out of its decoded contract state and uses a 
 - `docs/PHASE_1C_REPORT.md` — browser-runtime and Wave 2 release status
 - `docs/PHASE_1D_REPORT.md` — product experience, UI verification, and current release recommendation
 - `docs/DESIGN_SYSTEM.md` — reusable visual, responsive, accessibility, and settlement-state patterns
+- `docs/DOCUMENTATION_SITE.md` — documentation architecture and maintenance conventions
 - `docs/PRIVACY_BOUNDARY.md` — exact public/private boundary
 - `docs/CONTRACT_DESIGN.md` — contract semantics and trust boundary
 - `docs/WAVE_2_SUBMISSION_CHECKLIST.md` — mandatory release artifacts and owner actions

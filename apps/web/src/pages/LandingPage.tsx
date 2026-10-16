@@ -22,6 +22,7 @@ export default function LandingPage() {
           <nav className="desktop-links" aria-label="Main navigation">
             <a href="#how-it-works">How it works</a>
             <a href="#security">Security</a>
+            <Link to="/docs">Documentation</Link>
             <a href={githubUrl} target="_blank" rel="noreferrer">GitHub</a>
             <Link className="button button-compact button-primary" to="/app">Open app</Link>
           </nav>
@@ -30,6 +31,7 @@ export default function LandingPage() {
             <nav aria-label="Mobile navigation">
               <a href="#how-it-works">How it works</a>
               <a href="#security">Security</a>
+              <Link to="/docs">Documentation</Link>
               <a href={githubUrl}>GitHub</a>
               <Link to="/app">Open app</Link>
             </nav>
@@ -155,7 +157,7 @@ export default function LandingPage() {
       <footer className="landing-footer">
         <div className="site-container footer-layout">
           <div><Brand /><p>Private payments. Verifiable settlement.</p></div>
-          <div className="footer-links"><a href={githubUrl}><Github size={15} />Repository</a><a href={`${githubUrl}/tree/main/docs`}>Documentation</a><Link to="/app/settings">Product limitations</Link></div>
+          <div className="footer-links"><a href={githubUrl}><Github size={15} />Repository</a><Link to="/docs">Documentation</Link><Link to="/app/settings">Product limitations</Link></div>
           <p className="footer-note">Apache-2.0 · Midnight local prototype · No mainnet deployment</p>
         </div>
       </footer>

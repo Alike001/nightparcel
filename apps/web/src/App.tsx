@@ -4,6 +4,7 @@ import { Brand } from './components/Brand';
 
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const WorkspacePage = lazy(() => import('./pages/WorkspacePage'));
+const DocumentationPage = lazy(() => import('./pages/DocumentationPage'));
 
 function PageLoader() {
   return (
@@ -34,6 +35,7 @@ export function App() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/docs/*" element={<DocumentationPage />} />
           <Route path="/app/*" element={<WorkspacePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
