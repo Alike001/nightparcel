@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-10-15T22:49:57.557Z",
+  "network": "undeployed",
+  "versions": {
+    "node": "v22.23.3",
+    "midnightJs": "4.1.1",
+    "walletSdk": "1.2.0",
+    "compactCompiler": "0.31.1",
+    "nodeImage": "midnightntwrk/midnight-node:1.0.0",
+    "indexerImage": "midnightntwrk/indexer-standalone:4.3.3",
+    "proofServerImage": "midnightntwrk/proof-server:8.1.0"
+  },
+  "actors": {
+    "independent": true,
+    "merchantFingerprint": "7ec59271da631996",
+    "payerFingerprint": "40d7c396ba11e597"
+  },
+  "contracts": {
+    "demoToken": "0e76b8b1967dae1b617225d46ce522035ca2eed82c8879b90d23b04024c8534a",
+    "nightParcel": "1474cd09114f90683f028bc91354026dd4bd038879428b38880dfb95d3e70324"
+  },
+  "tokenColor": "aeee96dcd18f02863846715a159b3898de6a30213da004c0e58d0a4390e8dffb",
+  "amount": "125",
+  "balances": {
+    "merchantBefore": "0",
+    "merchantAfter": "125",
+    "payerBefore": "300",
+    "payerAfter": "175"
+  },
+  "transfer": {
+    "transactionId": "009edba2ce40d79270a8bec5a892b330db25e72917aa3e7f2634c0e992ab406586",
+    "indexedHash": "640a9f1366e585ed53b6e64efd326beef592498c53e11b59756628d9c3fe4a32",
+    "status": "SUCCESS",
+    "blockHeight": 37,
+    "blockHash": "d7f45afe9f76a39f560a016de9542fa0d101c914db5ae0f8d46207624725648f",
+    "blockTimestamp": 1792104516000,
+    "fee": "53450103312063",
+    "proofMilliseconds": 28266,
+    "submitMilliseconds": 18206,
+    "payerHistoryStatus": "SUCCESS",
+    "recipientHistoryStatus": "SUCCESS"
+  },
+  "commitments": {
+    "invoice": "184dbb9b819776eeb5e09491187f560c59d3f71e16ed7649309cf15d3485b828",
+    "receipt": "2d42900d3073bba61c7c763887ea1ba40c63904928c1a7145e037759fca7d14a"
+  },
+  "publicVisibility": {
+    "rawTransactionHexCharacters": 37054,
+    "identifiers": 4,
+    "zswapRange": [
+      29,
+      31
+    ],
+    "zswapEventCount": 3,
+    "zswapEventHexCharacters": [
+      186,
+      650,
+      650
+    ],
+    "contractActionCount": 0,
+    "unshieldedCreatedOutputCount": 0,
+    "unshieldedSpentOutputCount": 0
+  },
+  "privacyScan": {
+    "positiveControlInvoiceCommitmentPublic": true,
+    "sensitiveValuesFoundInCreateOrReceiptRaw": {
+      "merchantSecret": false,
+      "invoiceId": false,
+      "payeeCoinPublicKey": false,
+      "payeeEncryptionPublicKey": false,
+      "termsDigest": false,
+      "invoiceSalt": false,
+      "walletIdentifierDigest": false,
+      "indexedTransactionHash": false,
+      "confirmationBlockHash": false,
+      "receiptSalt": false
+    }
+  },
+  "verificationChecks": {
+    "payerAccepted": true,
+    "indexerAccepted": true,
+    "recipientReconciled": true,
+    "senderDeltaMatches": true,
+    "recipientDeltaMatches": true,
+    "receiptMatches": true
+  },
+  "applicationStatus": "PAID_VERIFIED"
+}

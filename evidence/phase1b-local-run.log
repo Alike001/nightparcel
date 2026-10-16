@@ -1,0 +1,24 @@
+
+ RUN  v4.1.11 /home/ali/Desktop/midnight/nightparcel
+
+Sourcemap for "/home/ali/Desktop/midnight/nightparcel/contract/managed/nightparcel/contract/index.js" points to missing source files
+Sourcemap for "/home/ali/Desktop/midnight/nightparcel/contract/managed/demo-token/contract/index.js" points to missing source files
+[23:45:56.393] [32mINFO[39m (610900): [36mInitializing wallet builder for undeployed[39m
+[23:45:56.616] [32mINFO[39m (610900): [36mCreating dust wallet with params: {"indexerClientConnection":{"indexerHttpUrl":"http://127.0.0.1:8088/api/v4/graphql","indexerWsUrl":"ws://127.0.0.1:8088/api/v4/graphql/ws"},"provingServerUrl":"http://127.0.0.1:6300/","networkId":"undeployed","relayURL":"ws://127.0.0.1:9944/","txHistoryStorage":{"storage":{}},"costParameters":{"ledgerParams":{"__wbg_ptr":4654560},"additionalFeeOverhead":"1000","feeBlocksMargin":5}}[39m
+[23:45:56.655] [32mINFO[39m (610900): [36mInitializing wallet builder for undeployed[39m
+[23:45:56.716] [32mINFO[39m (610900): [36mCreating dust wallet with params: {"indexerClientConnection":{"indexerHttpUrl":"http://127.0.0.1:8088/api/v4/graphql","indexerWsUrl":"ws://127.0.0.1:8088/api/v4/graphql/ws"},"provingServerUrl":"http://127.0.0.1:6300/","networkId":"undeployed","relayURL":"ws://127.0.0.1:9944/","txHistoryStorage":{"storage":{}},"costParameters":{"ledgerParams":{"__wbg_ptr":4663408},"additionalFeeOverhead":"1000","feeBlocksMargin":5}}[39m
+2026-10-15 23:45:57        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from ws://127.0.0.1:9944/: 1000:: Normal Closure
+2026-10-15 23:45:57        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from ws://127.0.0.1:9944/: 1000:: Normal Closure
+2026-10-15 23:45:58        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from ws://127.0.0.1:9944/: 1000:: Normal Closure
+2026-10-15 23:45:58        RPC-CORE: subscribeRuntimeVersion(): RuntimeVersion:: disconnected from ws://127.0.0.1:9944/: 1000:: Normal Closure
+[23:46:00.877] INFO (610900): Wallet sync complete
+[23:46:00.992] INFO (610900): Wallet sync complete
+ ✓ src/test/nightparcel.local.test.ts (1 test) 241286ms
+     ✓ reconciles one direct custom-token payment and binds its evidence  236566ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  23:45:45
+   Duration  252.25s (transform 383ms, setup 0ms, import 10.66s, tests 241.29s, environment 0ms)
+
+[23:49:57.574] INFO (610900): NightParcel PAID_VERIFIED: transfer=009edba2ce40d79270a8bec5a892b330db25e72917aa3e7f2634c0e992ab406586 block=37

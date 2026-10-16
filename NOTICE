@@ -1,0 +1,10 @@
+NightParcel
+Copyright 2026 NightParcel contributors
+
+This product includes adaptations of simulator and wallet/provider scaffolding from
+midnightntwrk/midnight-examples, licensed under the Apache License, Version 2.0.
+Source inspected locally from the official repository at:
+https://github.com/midnightntwrk/midnight-examples
+
+No zk-freighter source, cryptography, branding, or visual assets are included.
+

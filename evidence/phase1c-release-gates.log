@@ -1,0 +1,34 @@
+NightParcel Phase 1C release gates
+Recorded: 2026-10-16T08:04:08+01:00
+
+Toolchain
+- Node.js: v22.23.3
+- Yarn: 4.18.0
+- Compact toolchain manager: 0.5.3
+- Compact compiler selected by `compact compile`: 0.31.1
+- Compact language: 0.23.0
+- Docker Engine: 29.1.3
+- Docker Compose: 2.40.3
+
+Commands and results
+- `yarn install --immutable`: PASS in 2.038s
+- `yarn compile:fast`: PASS
+- `yarn compile`: PASS; three NightParcel circuits and one demo-token circuit; full proving-key compilation completed in 1m40.49s
+- `yarn test:sim`: PASS; 1 file, 18 tests
+- `yarn test`: PASS; 2 files, 12 tests (7 simulator/privacy helpers, 5 connector tests)
+- `yarn typecheck`: PASS
+- `yarn lint`: PASS
+- `yarn build`: PASS; Vite 6.4.3, 1,784 modules, 993.56 kB JavaScript and 10,234.40 kB ledger WASM
+- `docker compose ps`: PASS; node, indexer, and proof server healthy
+- `curl http://127.0.0.1:5173/`: PASS; HTTP 200
+- upstream examples `git status --short`: empty
+- upstream docs `git status --short`: empty
+
+Warnings
+- Generated contract source map points to unavailable source files during simulator import.
+- Production JavaScript chunk exceeds Vite's 500 kB advisory threshold.
+
+Browser runtime
+- Lace 2.4.2 installation: observed in Chrome Default and Profile 2.
+- Connector authorization/readiness diagnostic: awaiting owner interaction.
+- Browser transfer/indexer/recipient reconciliation: not executed; no transaction evidence claimed.

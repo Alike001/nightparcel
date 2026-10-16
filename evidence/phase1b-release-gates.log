@@ -1,0 +1,48 @@
+v22.23.3
+4.18.0
+0.31.1
+tsconfig.node.json(7,35): error TS5096: Option 'allowImportingTsExtensions' can only be used when either 'noEmit' or 'emitDeclarationOnly' is set.
+
+/home/ali/Desktop/midnight/nightparcel/src/test/nightparcel.sim.test.ts
+  166:29  error  'c' is defined but never used   @typescript-eslint/no-unused-vars
+  166:44  error  'i' is defined but never used   @typescript-eslint/no-unused-vars
+  167:28  error  '_c' is defined but never used  @typescript-eslint/no-unused-vars
+  167:44  error  '_i' is defined but never used  @typescript-eslint/no-unused-vars
+  168:23  error  '_c' is defined but never used  @typescript-eslint/no-unused-vars
+  168:39  error  '_i' is defined but never used  @typescript-eslint/no-unused-vars
+  169:21  error  '_c' is defined but never used  @typescript-eslint/no-unused-vars
+  169:37  error  '_i' is defined but never used  @typescript-eslint/no-unused-vars
+  171:16  error  '_c' is defined but never used  @typescript-eslint/no-unused-vars
+  171:32  error  '_i' is defined but never used  @typescript-eslint/no-unused-vars
+  172:19  error  '_c' is defined but never used  @typescript-eslint/no-unused-vars
+  172:35  error  '_i' is defined but never used  @typescript-eslint/no-unused-vars
+  173:25  error  '_c' is defined but never used  @typescript-eslint/no-unused-vars
+  173:41  error  '_i' is defined but never used  @typescript-eslint/no-unused-vars
+  174:18  error  '_c' is defined but never used  @typescript-eslint/no-unused-vars
+  174:34  error  '_i' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 16 problems (16 errors, 0 warnings)
+
+
+ RUN  v4.1.11 /home/ali/Desktop/midnight/nightparcel
+
+ ✓ packages/sim/src/privacy.sim.test.ts (7 tests) 24ms
+ ✓ apps/web/src/connector.test.ts (2 tests) 13ms
+
+ Test Files  2 passed (2)
+      Tests  9 passed (9)
+   Start at  23:56:52
+   Duration  678ms (transform 214ms, setup 0ms, import 689ms, tests 37ms, environment 0ms)
+
+
+ RUN  v4.1.11 /home/ali/Desktop/midnight/nightparcel
+
+Sourcemap for "/home/ali/Desktop/midnight/nightparcel/contract/managed/nightparcel/contract/index.js" points to missing source files
+ ✓ src/test/nightparcel.sim.test.ts (18 tests) 1255ms
+
+ Test Files  1 passed (1)
+      Tests  18 passed (18)
+   Start at  23:56:54
+   Duration  1.88s (transform 272ms, setup 0ms, import 397ms, tests 1.26s, environment 0ms)
+
+tsconfig.node.json(7,35): error TS5096: Option 'allowImportingTsExtensions' can only be used when either 'noEmit' or 'emitDeclarationOnly' is set.
