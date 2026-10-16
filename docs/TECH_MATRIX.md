@@ -1,4 +1,4 @@
-# NightParcel technical matrix through Phase 1C
+# NightParcel technical matrix through Phase 1E
 
 Date: 2026-10-16. Status reflects local evidence from this machine, not upstream CI.
 
@@ -34,16 +34,17 @@ Date: 2026-10-16. Status reflects local evidence from this machine, not upstream
 | Phase 1 privacy scan | VERIFIED_WITH_LIMITATION | positive control passed; exact sensitive bytes absent from decoded state/raw calls | alternate encoding and full Zswap decoding remain unresolved |
 | Lace browser profiles | INSTALLED_UNVERIFIED | Lace 2.4.2 manifests in Chrome Default and Profile 2 | unlock, account initialization, and authorization require owner action |
 | Connector API integration | IMPLEMENTED_RUNTIME_PENDING | Connector API 4.0.1; version/network/DUST/capability/prover checks; sanitized account fingerprint; transfer path compiles | no authorized two-profile transfer or reconciliation yet |
-| Product frontend | IMPLEMENTED_WITH_LIMITATIONS | 4 responsive surfaces; 18 simulator + 12 supporting tests; typecheck/lint/build pass | create/acknowledge/private-state browser paths gated and disabled |
+| Product frontend | IMPLEMENTED_WITH_LIMITATIONS | public landing + 5 workspace surfaces; 18 simulator + 18 supporting tests; typecheck/lint/build pass | create/acknowledge/private-state browser paths gated and disabled |
 | Phase 1C overall | BLOCKED | code/release materials pass local gates | AC-07/AC-08 and browser persistence/recovery await owner-controlled runtime |
 | Public repository | VERIFIED | `Alike001/nightparcel`, public `main`, topic `midnightntwrk`, initial commit `d5c80e7` | final browser result must still be pushed consistently |
 | Release readiness | NOT READY | README/license/NOTICE/checklist/demo/deck plans and public repository prepared | final deck/video, AKINDO fields, deadline confirmation, and browser result missing |
 | Phase 1D landing page | VERIFIED | `/` product explanation; CTA/navigation Playwright coverage | local prototype claims only |
 | Phase 1D workspace | VERIFIED_WITH_LIMITATIONS | five task surfaces; honest draft/import/submission/evidence states | browser Compact create/acknowledge disabled |
 | Responsive product UI | VERIFIED | Playwright at 1440/1024/768/390; no page overflow | manual screen-reader/zoom/forced-colors audit open |
-| Browser UI suite | VERIFIED | 15/15 Playwright tests in installed Chrome | deterministic fixtures validate UI, not settlement |
+| Browser UI suite | VERIFIED | 16/16 Playwright tests in installed Chrome | deterministic fixtures validate UI, not settlement |
 | Production web build | VERIFIED_WITH_LIMITATION | lazy landing/workspace routes; build/typecheck/lint pass | ledger WASM ~10.2 MB; workspace chunk ~585 KB |
 | Phase 1D overall | SUBMIT_WITH_LIMITATIONS | understandable product, original contract baseline, real evidence, and honest browser boundaries | owner-assisted two-profile browser settlement remains unverified |
+| Lace `hintUsage` runtime mismatch | FIXED, MANUAL RETEST PENDING | runtime function guard; explicit rejection propagation; compatibility limitation in sanitized diagnostic; unit and Playwright regression coverage | actual Lace 2.4.2 reauthorization requires owner action |
 
 ## Gate verdicts
 

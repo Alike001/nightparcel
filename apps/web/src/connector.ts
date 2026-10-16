@@ -50,9 +50,27 @@ export type WalletDiagnostic = {
   };
   capabilities: Record<'makeTransfer' | 'submitTransaction' | 'getTxHistory' | 'getProvingProvider', boolean>;
   proofServer: { configuredForLaceLocal: boolean; browserReachability: 'reachable' | 'cors-or-unreachable' | 'not-configured' };
+  compatibilityLimitations: string[];
   issues: string[];
   readyForTransfer: boolean;
 };
+
+const REQUIRED_DIAGNOSTIC_METHODS = [
+  'getConnectionStatus',
+  'getConfiguration',
+  'getShieldedAddresses',
+  'getShieldedBalances',
+  'getUnshieldedBalances',
+  'getDustBalance',
+] as const satisfies ReadonlyArray<keyof ConnectedAPI>;
+
+const HINTED_METHODS = [
+  ...REQUIRED_DIAGNOSTIC_METHODS,
+  'makeTransfer',
+  'submitTransaction',
+  'getTxHistory',
+  'getProvingProvider',
+] as const;
 
 export function isCompatibleConnectorVersion(version: string): boolean {
   const match = /^(\d+)\.(\d+)\.(\d+)(?:-[0-9A-Za-z.-]+)?$/.exec(version);
@@ -95,6 +113,7 @@ export async function diagnoseConnectedWallet(
   wallet: DetectedWallet,
   api: ConnectedAPI,
   expectedNetwork: string,
+  compatibilityLimitations: string[] = [],
 ): Promise<WalletDiagnostic> {
   const compatible = isCompatibleConnectorVersion(wallet.api.apiVersion);
   const [status, configuration, addresses, shieldedBalances, unshieldedBalances, dust] = await Promise.all([
@@ -152,6 +171,7 @@ export async function diagnoseConnectedWallet(
     },
     capabilities,
     proofServer,
+    compatibilityLimitations,
     issues,
     readyForTransfer: issues.length === 0,
   };
@@ -184,17 +204,21 @@ export async function connectWallet(
     throw new Error(`Wallet connector ${wallet.api.apiVersion} is incompatible; NightParcel requires ${SUPPORTED_CONNECTOR_RANGE}.`);
   }
   const api = await wallet.api.connect(network);
-  await api.hintUsage([
-    'getConnectionStatus',
-    'getConfiguration',
-    'getShieldedAddresses',
-    'getShieldedBalances',
-    'getDustBalance',
-    'makeTransfer',
-    'submitTransaction',
-    'getTxHistory',
-  ]);
-  const diagnostic = await diagnoseConnectedWallet(wallet, api, network);
+  const compatibilityLimitations: string[] = [];
+  if (typeof api.hintUsage === 'function') {
+    await api.hintUsage([...HINTED_METHODS]);
+  } else {
+    compatibilityLimitations.push(
+      'The wallet runtime does not expose Connector API hintUsage; NightParcel continued with explicit capability and readiness checks.',
+    );
+  }
+
+  const missingDiagnosticMethod = REQUIRED_DIAGNOSTIC_METHODS.find((method) => typeof api[method] !== 'function');
+  if (missingDiagnosticMethod) {
+    throw new Error(`Required connector method ${missingDiagnosticMethod} is unavailable.`);
+  }
+
+  const diagnostic = await diagnoseConnectedWallet(wallet, api, network, compatibilityLimitations);
   if (diagnostic.connection.status !== 'connected' || diagnostic.configuration.networkId !== network) {
     throw new Error(diagnostic.issues.join(' ') || `Wallet is not connected to ${network}.`);
   }

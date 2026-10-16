@@ -126,7 +126,14 @@ export default function WorkspacePage() {
       }
       setApi(connected.api);
       setWalletState('connected');
-      setWalletNotice({ tone: 'success', message: `${selected.name} is ready on the local Midnight network.` });
+      const compatibilityDetails = connected.diagnostic.compatibilityLimitations.join(' ');
+      setWalletNotice(compatibilityDetails
+        ? {
+            tone: 'warning',
+            message: `${selected.name} passed the required local payment checks with a connector compatibility note.`,
+            details: compatibilityDetails,
+          }
+        : { tone: 'success', message: `${selected.name} is ready on the local Midnight network.` });
       if (import.meta.env.DEV) console.info('NightParcel sanitized wallet diagnostic', connected.diagnostic);
     } catch (error) {
       const details = error instanceof Error ? error.message : 'Unknown connector failure';

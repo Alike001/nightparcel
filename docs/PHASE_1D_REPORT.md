@@ -41,7 +41,7 @@ This phase does not add browser Compact submission, encrypted application privat
 
 ### Automated browser coverage
 
-Fifteen Playwright scenarios cover:
+Sixteen Playwright scenarios cover:
 
 - public navigation and primary calls to action;
 - responsive mobile navigation;
@@ -79,11 +79,11 @@ Run from the repository root with Node 22 and Corepack Yarn 4.18.0:
 | `yarn install --immutable` | PASS |
 | `yarn compile:fast` | PASS; both Compact contracts compiled with compiler 0.31.1 |
 | `yarn test:sim` | PASS; 18/18 |
-| `yarn test` | PASS; 12/12 |
+| `yarn test` | PASS; 18/18 |
 | `yarn typecheck` | PASS |
 | `yarn lint` | PASS |
 | `yarn build` | PASS |
-| `yarn test:e2e` | PASS; 15/15 in system Chrome |
+| `yarn test:e2e` | PASS; 16/16 in system Chrome |
 
 The production build is route-split. The landing route does not load the larger workspace/ledger bundle. The shared entry is approximately 497 KB and the workspace chunk approximately 585 KB before compression; the generated ledger WASM is approximately 10.2 MB. Further crypto-bundle reduction must not alter verified behavior and is deferred.
 
@@ -120,3 +120,35 @@ They show a disconnected product state and contain no wallet secret, full addres
 ## Release recommendation
 
 **SUBMIT_WITH_LIMITATIONS.** The public explanation, product workspace, honest draft/review states, verified Compact/Node baseline, automated UI coverage, and release documentation are strong enough for an evidence-led Wave 2 submission. Present the working original contract and Phase 1B local settlement as verified. Present browser-wallet transfer, browser contract calls, private-state recovery, and full browser reconciliation as unfinished owner-assisted work—never as working production functionality.
+
+## Phase 1E runtime compatibility update
+
+Manual authorization with Lace 2.4.2 exposed a real mismatch between the declared Connector API 4.0.1 `ConnectedAPI` type and the injected runtime object: the type includes `hintUsage`, but the authorized Lace object did not expose that function. NightParcel called it unconditionally, causing `api.hintUsage is not a function` before readiness diagnostics could run.
+
+The connection path now:
+
+1. awaits `hintUsage` when it is a runtime function and propagates any permission rejection;
+2. records absent `hintUsage` as a sanitized, non-blocking `compatibilityLimitations` entry;
+3. preflights every method needed to run diagnostics before invoking it;
+4. runs the existing network, shielded-address, balances, DUST, transaction-capability, history, proving, and local-proof-server checks; and
+5. allows the workspace to retain the connected API only when `readyForTransfer` is true.
+
+Missing transfer/submission/history/proving methods, wrong network, absent shielded address, zero DUST, or invalid local proof-server configuration still block readiness. A present `hintUsage` that returns `PermissionRejected` is not swallowed.
+
+Regression coverage now includes six connector cases requested in Phase 1E plus a deterministic Playwright UI fixture. The fixture proves only that the absent-method crash is fixed and is explicitly not a real Lace session or payment.
+
+### Stale development server finding
+
+The process listening on `127.0.0.1:5173` used the correct repository, but it had been running since before the Phase 1D branch changes. Its current module response was Phase 1D, while an already-open browser tab could still retain the old application/module graph. Only the exact NightParcel Vite process was stopped and restarted from:
+
+`/home/ali/Desktop/midnight/nightparcel/apps/web`
+
+The fresh server exposes the Phase 1D landing page at `/` and workspace at `/app`. A hard refresh is still appropriate in each owner-controlled Chrome profile before authorization.
+
+### Owner-controlled Lace readiness order
+
+1. In Chrome Default, hard-refresh `/app`, unlock Lace, confirm the disposable account and `undeployed` local network, then approve Connect Lace.
+2. Save only the sanitized diagnostic. Confirm API 4.x, distinct account fingerprint, local endpoints, non-empty shielded-address preview, positive DUST, required methods, and local proving configuration.
+3. Repeat in Chrome Profile 2 and confirm its account fingerprint differs while the network/endpoints match.
+4. Confirm the intended recipient from Profile 2 and verify the supported test asset is actually available to the payer.
+5. Stop before token authorization unless both profiles pass. No browser payment or verified settlement is claimed by this update.

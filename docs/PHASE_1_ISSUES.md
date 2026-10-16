@@ -23,6 +23,13 @@ Status: Phase 1D product experience is verified; Lace 2.4.2 exists in two profil
 
 Until P10 completes, the browser product is a verified request/review/diagnostic experience with a real but runtime-pending connector path—not a complete browser settlement application.
 
+### P11 — Lace 2.4.2 missing runtime `hintUsage`: FIXED, MANUAL RETEST PENDING
+
+- Root cause: the installed Connector API 4.0.1 type declares `hintUsage`, while the ConnectedAPI returned by Lace 2.4.2 after approval omitted it.
+- Fix: guard the optional runtime hint, retain explicit permission rejection when it exists, record absence under sanitized compatibility limitations, and continue into strict diagnostics.
+- Regression coverage: missing/working hint, permission rejection, missing transaction method, wrong network, zero DUST, and mocked browser UI path.
+- Remaining gate: repeat authorization first in Chrome Default and then Profile 2. No transfer may begin until both sanitized diagnostics pass and the test asset/recipient are confirmed.
+
 ## Completed Phase 0 gates
 
 ### P0 — official baseline: COMPLETE

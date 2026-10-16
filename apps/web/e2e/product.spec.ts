@@ -66,6 +66,53 @@ test('wallet connection exposes a loading state while Lace approval is pending',
   await expect(page.getByText('Check Lace and approve the NightParcel connection request.')).toBeVisible();
 });
 
+test('mocked connector without hintUsage reaches diagnostics instead of crashing', async ({ page }) => {
+  // This deterministic fixture is a UI regression guard, not evidence of a real Lace session.
+  await page.route('http://127.0.0.1:6300/health', (route) => route.fulfill({ status: 200, body: 'ok' }));
+  await page.addInitScript(() => {
+    window.midnight = {
+      'fixture-wallet-without-hint': {
+        apiVersion: '4.0.1',
+        rdns: 'io.lace.fixture-without-hint',
+        name: 'Lace compatibility fixture',
+        icon: '',
+        connect: async () => ({
+          getConnectionStatus: async () => ({ status: 'connected' as const, networkId: 'undeployed' }),
+          getConfiguration: async () => ({
+            networkId: 'undeployed',
+            indexerUri: 'http://127.0.0.1:8088/api/v3/graphql',
+            indexerWsUri: 'ws://127.0.0.1:8088/api/v3/graphql/ws',
+            substrateNodeUri: 'ws://127.0.0.1:9944',
+            proverServerUri: 'http://127.0.0.1:6300',
+          }),
+          getShieldedAddresses: async () => ({
+            shieldedAddress: `mn_shield-addr_undeployed1${'a'.repeat(72)}`,
+            shieldedCoinPublicKey: 'fixture-coin-key',
+            shieldedEncryptionPublicKey: 'fixture-encryption-key',
+          }),
+          getShieldedBalances: async () => ({ fixtureToken: 125n }),
+          getUnshieldedBalances: async () => ({}),
+          getDustBalance: async () => ({ balance: 10n, cap: 100n }),
+          makeTransfer: async () => ({ tx: '' }),
+          submitTransaction: async () => undefined,
+          getTxHistory: async () => [],
+          getProvingProvider: async () => { throw new Error('Not invoked by readiness diagnostics'); },
+        }),
+      },
+    };
+  });
+
+  await page.goto('/app/settings');
+  await expect(page.getByRole('option', { name: /Lace compatibility fixture/ })).toBeAttached();
+  await page.getByRole('button', { name: 'Connect and check' }).click();
+
+  await expect(page.getByText(/passed the required local payment checks with a connector compatibility note/i)).toBeVisible();
+  await page.getByText('Technical details').click();
+  await expect(page.getByRole('code').filter({ hasText: /does not expose Connector API hintUsage/i })).toBeVisible();
+  await page.getByRole('link', { name: 'Overview' }).click();
+  await expect(page.getByText('Wallet ready')).toBeVisible();
+});
+
 test('request form validates fields and produces an honest downloadable draft', async ({ page }) => {
   await page.goto('/app/request');
   await page.getByRole('button', { name: /Create private draft/ }).click();
