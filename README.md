@@ -12,7 +12,7 @@ Freelancers and small businesses need payment evidence without publishing invoic
 - Three original state-changing circuits: `createInvoice`, `cancelInvoice`, and `acknowledgeReceipt`.
 - Eighteen simulator tests covering authorization, replay, invalid evidence, state invariants, and public-state privacy.
 - One clean local-network payment of 125 custom shielded-token units between independent wallets, reconciled by the payer wallet, indexer, and recipient wallet before `PAID_VERIFIED` was assigned.
-- A responsive four-surface web application with real connector calls and a clearly labelled immutable local-run evidence view.
+- A public product landing page and a responsive five-surface workspace with real connector calls, honest draft/submission states, and a clearly labelled immutable local-run evidence view.
 
 The connector readiness path discovers Lace instances, checks Connector API compatibility, asks for explicit authorization, validates the wallet-reported network and endpoints, retrieves a sanitized account fingerprint and shielded-address preview, reads balances and DUST, and checks transfer, history, submission, and proving capabilities. Two-profile runtime settlement is still a release gate; see `docs/PHASE_1C_REPORT.md`.
 
@@ -21,7 +21,7 @@ The connector readiness path discovers Lace instances, checks Connector API comp
 1. Run the deterministic install and verification commands below.
 2. Inspect `contract/nightparcel.compact` for the three original circuits.
 3. Read `evidence/phase1b-local.json` and the matching redacted logs for the authentic two-wallet local transfer.
-4. Start the web application and inspect its four surfaces. The immutable evidence view is explicitly separated from current-session browser state.
+4. Start the web application. `/` explains the product; `/app` opens the workspace. Recorded evidence is explicitly separated from current-session browser state.
 5. Review `docs/PRIVACY_BOUNDARY.md` before evaluating privacy claims.
 
 ## Architecture
@@ -60,6 +60,7 @@ yarn test:sim
 yarn typecheck
 yarn lint
 yarn build
+yarn test:e2e
 ```
 
 `yarn compile` performs the full proving-key build and is slower than `compile:fast`.
@@ -85,9 +86,30 @@ Never use production or public-testnet wallet seeds. The test deploys an open fa
 yarn workspace @nightparcel/web dev
 ```
 
-The app checks the connected network and balances, calls connector `makeTransfer`, derives the identifier from the returned serialized transaction, and calls `submitTransaction`. Submission remains explicitly unresolved until independent recipient and network reconciliation can run.
+Open `http://localhost:5173/` for the public product page or `http://localhost:5173/app` for the workspace.
+
+| Route | Purpose |
+|---|---|
+| `/` | public explanation, privacy boundary, Midnight integration, and recorded evidence |
+| `/app` | overview and wallet connection |
+| `/app/request` | validate and download an honest local request draft |
+| `/app/pay` | import a committed request, review terms, and authorize in Lace |
+| `/app/activity` | separate live browser state from recorded local evidence |
+| `/app/settings` | connector, network, DUST, proving, and privacy diagnostics |
+
+The request form currently produces an explicitly uncommitted local draft. Browser Compact creation and acknowledgement remain disabled until the SDK path and encrypted account-scoped private state are verified. Private request contents are never placed in public URLs.
+
+The payment surface checks the connected network and balances, calls connector `makeTransfer`, derives the identifier from the returned serialized transaction, and calls `submitTransaction`. Submission remains `SUBMITTED · UNRESOLVED` until independent recipient and network reconciliation can run. It is never promoted to `PAID_VERIFIED` from the connector callback alone.
 
 Lace approval, unlock, passwords, and transaction authorization always remain owner actions. A connector returned by `window.midnight` is rejected unless its API major version is 4 and its connected configuration passes the runtime diagnostic. Diagnostics contain no full addresses, seeds, keys, or private invoice openings.
+
+Playwright uses the locally installed Chrome channel and deterministic UI fixtures:
+
+```bash
+yarn test:e2e
+```
+
+Fixtures test interface states only and are never presented as settlement evidence. Genuine responsive captures are in `evidence/phase1d-*.png`.
 
 ## Privacy boundary
 
@@ -99,6 +121,8 @@ NightParcel keeps invoice openings out of its decoded contract state and uses a 
 - `evidence/phase1b-local-run.log` — test and proof timing output without seeds
 - `docs/PHASE_1B_REPORT.md` — milestone verdicts, commands, evidence, and limitations
 - `docs/PHASE_1C_REPORT.md` — browser-runtime and Wave 2 release status
+- `docs/PHASE_1D_REPORT.md` — product experience, UI verification, and current release recommendation
+- `docs/DESIGN_SYSTEM.md` — reusable visual, responsive, accessibility, and settlement-state patterns
 - `docs/PRIVACY_BOUNDARY.md` — exact public/private boundary
 - `docs/CONTRACT_DESIGN.md` — contract semantics and trust boundary
 - `docs/WAVE_2_SUBMISSION_CHECKLIST.md` — mandatory release artifacts and owner actions

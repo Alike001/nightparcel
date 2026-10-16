@@ -1,7 +1,27 @@
 # NightParcel prioritized issues after Phase 0
 
 Date: 2026-10-16  
-Status: Phase 1B Node/contract implementation is verified; Lace 2.4.2 now exists in two profiles, but owner authorization and the two-profile browser lifecycle remain open.
+Status: Phase 1D product experience is verified; Lace 2.4.2 exists in two profiles, but owner authorization and the two-profile browser lifecycle remain open.
+
+## Phase 1D product status
+
+### P9 — public landing, task workspace, and deterministic UI verification: COMPLETE
+
+- `/` now explains Request → Pay → Verify, the private/public boundary, Midnight-specific architecture, recorded local evidence, and prototype limitations without requiring a wallet.
+- `/app` now provides Overview, Request payment, Make payment, Activity and evidence, and Settings.
+- The request path creates only an explicit `DRAFT_UNCOMMITTED` local file. The pay path rejects that draft and accepts only a canonical committed request.
+- The real Connector API transfer path is preserved and can produce only `SUBMITTED · UNRESOLVED` without all six settlement checks.
+- Fifteen Playwright scenarios pass, including required responsive widths, request/payment states, evidence separation, keyboard entry, and screenshot capture.
+- Typecheck, lint, supporting tests, production build, and route-level splitting pass.
+
+### P10 — owner-assisted browser lifecycle: OPEN / OWNER ACTION REQUIRED
+
+- Unlock and approve Lace in the two disposable Chrome profiles.
+- Confirm both wallets use the same local network and local prover.
+- Execute Alice → Bob, capture indexer acceptance, and independently reconcile Bob.
+- Runtime-test browser Compact create/acknowledge and encrypted account-scoped recovery before enabling those controls.
+
+Until P10 completes, the browser product is a verified request/review/diagnostic experience with a real but runtime-pending connector path—not a complete browser settlement application.
 
 ## Completed Phase 0 gates
 

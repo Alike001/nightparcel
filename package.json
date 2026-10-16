@@ -16,8 +16,9 @@
     "compile": "compact compile contract/nightparcel.compact contract/managed/nightparcel && compact compile contract/demo-token.compact contract/managed/demo-token",
     "compile:fast": "compact compile --skip-zk contract/nightparcel.compact contract/managed/nightparcel && compact compile --skip-zk contract/demo-token.compact contract/managed/demo-token",
     "test:sim": "vitest run src/**/*.sim.test.ts",
-    "test": "vitest run --exclude src/**/*.sim.test.ts --exclude src/**/*.local.test.ts",
+    "test": "vitest run --exclude src/**/*.sim.test.ts --exclude src/**/*.local.test.ts --exclude 'apps/web/e2e/**'",
     "test:local": "MIDNIGHT_NETWORK=local vitest run src/**/*.local.test.ts",
+    "test:e2e": "yarn workspace @nightparcel/web test:e2e",
     "typecheck": "tsc --noEmit -p . && yarn workspace @nightparcel/web typecheck",
     "lint": "eslint . --ignore-pattern apps/web && yarn workspace @nightparcel/web lint",
     "build": "yarn workspace @nightparcel/web build"

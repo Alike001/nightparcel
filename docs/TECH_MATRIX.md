@@ -38,6 +38,12 @@ Date: 2026-10-16. Status reflects local evidence from this machine, not upstream
 | Phase 1C overall | BLOCKED | code/release materials pass local gates | AC-07/AC-08 and browser persistence/recovery await owner-controlled runtime |
 | Public repository | VERIFIED | `Alike001/nightparcel`, public `main`, topic `midnightntwrk`, initial commit `d5c80e7` | final browser result must still be pushed consistently |
 | Release readiness | NOT READY | README/license/NOTICE/checklist/demo/deck plans and public repository prepared | final deck/video, AKINDO fields, deadline confirmation, and browser result missing |
+| Phase 1D landing page | VERIFIED | `/` product explanation; CTA/navigation Playwright coverage | local prototype claims only |
+| Phase 1D workspace | VERIFIED_WITH_LIMITATIONS | five task surfaces; honest draft/import/submission/evidence states | browser Compact create/acknowledge disabled |
+| Responsive product UI | VERIFIED | Playwright at 1440/1024/768/390; no page overflow | manual screen-reader/zoom/forced-colors audit open |
+| Browser UI suite | VERIFIED | 15/15 Playwright tests in installed Chrome | deterministic fixtures validate UI, not settlement |
+| Production web build | VERIFIED_WITH_LIMITATION | lazy landing/workspace routes; build/typecheck/lint pass | ledger WASM ~10.2 MB; workspace chunk ~585 KB |
+| Phase 1D overall | SUBMIT_WITH_LIMITATIONS | understandable product, original contract baseline, real evidence, and honest browser boundaries | owner-assisted two-profile browser settlement remains unverified |
 
 ## Gate verdicts
 
@@ -50,6 +56,7 @@ Date: 2026-10-16. Status reflects local evidence from this machine, not upstream
 | E: original NightParcel contract | PASS | 3 circuits; full proving-key compile; 18/18 simulator tests |
 | F: sNIGHT | NO-GO | research only; critical invariants untested |
 | G: Lace two-profile lifecycle | BLOCKED | extension is installed twice, but owner authorization and real runtime evidence are absent |
+| H: Phase 1D product experience | PASS_WITH_LIMITATION | public landing, task workspace, responsive tests, production build | full browser lifecycle and private-state recovery remain blocked |
 
 ## Exact two-wallet evidence
 
